@@ -4,6 +4,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { ResponseUserDto } from './dto/response-user.dto';
 import { plainToInstance } from 'class-transformer';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -12,8 +13,14 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  async createUser(user: Partial<User>) {
-    return this.userRepository.save(user);
+  async createUser(userDto: CreateUserDto) {
+    const userEntity = this.userRepository.create({
+      ...userDto,
+      regDate: new Date(),
+      modiDate: new Date(),
+    });
+
+    return this.userRepository.save(userEntity);
   }
 
   async findAllUsers() {
