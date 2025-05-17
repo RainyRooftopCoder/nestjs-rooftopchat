@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { ResponseUserDto } from './dto/response-user.dto';
 import { plainToInstance } from 'class-transformer';
 import { CreateUserDto } from './dto/create-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -14,8 +15,11 @@ export class UsersService {
   ) {}
 
   async createUser(userDto: CreateUserDto) {
+    const hashedPswd = await bcrypt.hash(userDto.password, 10);
+
     const userEntity = this.userRepository.create({
       ...userDto,
+      password: hashedPswd,
       regDate: new Date(),
       modiDate: new Date(),
     });
@@ -28,5 +32,11 @@ export class UsersService {
     const resDto: ResponseUserDto[] = plainToInstance(ResponseUserDto, users);
 
     return plainToInstance(ResponseUserDto, users);
+  }
+
+  async findUser(email: string) {
+    return this.userRepository.find({
+      where: { email },
+    });
   }
 }
