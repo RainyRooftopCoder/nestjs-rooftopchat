@@ -29,13 +29,12 @@ export class UsersService {
 
   async findAllUsers() {
     const users = await this.userRepository.find();
-    const resDto: ResponseUserDto[] = plainToInstance(ResponseUserDto, users);
 
     return plainToInstance(ResponseUserDto, users);
   }
 
-  async findUser(email: string) {
-    return this.userRepository.find({
+  async findUser(email: string): Promise<User | null> {
+    return this.userRepository.findOne({
       where: { email },
     });
   }
