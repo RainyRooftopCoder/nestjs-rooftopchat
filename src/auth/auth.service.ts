@@ -29,8 +29,23 @@ export class AuthService {
       throw new UnauthorizedException(
         '아디디 또는 비밀번호가 일치하지 않습니다.',
       );
-    } else {
-      /* JWT 작업 */
     }
+
+    /* JWT 작업 */
+    const payload = {
+      email: user.email,
+      nickname: user.nickname,
+    };
+
+    const accessToken = await this.jwtService.signAsync(payload);
+    // .sign() 대신 .signAsync()를 쓰면 Promise로 동작해 await 사용 가능
+
+    console.log(accessToken);
+
+    return {
+      accessToken: accessToken,
+      user: payload,
+      // 로그인 직후 사용자 정보 사용가능하게 정보 넘겨줌줌
+    };
   }
 }
